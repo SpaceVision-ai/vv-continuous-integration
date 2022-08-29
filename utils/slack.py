@@ -26,7 +26,7 @@ class SlackReporter:
             f'tag: {self.tag}_WARNING'
         )
 
-        response = self.send_slack_message(msg, self.prefix)
+        response = self.client.send_message(msg=msg, prefix=self.prefix)
         ts = response.get('ts', '')
         return ts
 
