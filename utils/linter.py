@@ -7,9 +7,6 @@ from pylint.reporters.text import TextReporter
 def is_python_file(file_path: str) -> bool:
     if file_path.endswith('.py'):
         return True
-    with open(file_path, 'r') as file:
-        if file.readline().startswith('#!/usr/bin/env python'):
-            return True
     return False
 
 
