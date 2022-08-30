@@ -16,17 +16,20 @@ class SlackReporter:
         return f'https://github.com/teamdable/{self.repository}/pull/{self.pr_number}'
 
 
-    def get_slack_message(self, msg: str) -> str:
-        return (
+    def send_slack_header(self) -> str:
+        
+        msg = (
             f'*Repository: {self.repository}* \n\n'
             '*Pull-request info:*\n'
             f'- branch: {self.branch} -> {self.target}\n'
             f'- url: {self.get_pull_request_url()}\n\n'
-            f'```{msg}```\n'
             f'tag: {self.tag}_WARNING'
         )
 
+        response = self.client.send_message(msg=msg, prefix=self.prefix)
+        ts = response.get('ts', '')
+        return ts
 
     def send_slack_message(self, msg: str):
-        message = self.get_slack_message(msg)
-        self.client.send_message(msg=message, prefix=self.prefix)
+        ts = self.send_slack_header()
+        self.client.send_message(msg=f'```{msg}```', prefix=self.prefix, reply_ts=ts)

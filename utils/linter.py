@@ -7,9 +7,6 @@ from pylint.reporters.text import TextReporter
 def is_python_file(file_path: str) -> bool:
     if file_path.endswith('.py'):
         return True
-    with open(file_path, 'r') as file:
-        if file.readline().startswith('#!/usr/bin/env python'):
-            return True
     return False
 
 
@@ -29,9 +26,6 @@ def get_pylint_score(file_path: str) -> Tuple[float, str]:
 def is_node_file(file_path: str) -> bool:
     if file_path.endswith('.js') or file_path.endswith('.ts') or file_path.endswith('.tsx') or file_path.endswith('.jsx'):
         return True
-    with open(file_path, 'r') as file:
-        if file.readline().startswith('#!/usr/bin/env node'):
-            return True
     return False
 
 
