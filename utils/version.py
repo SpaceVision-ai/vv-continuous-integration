@@ -2,16 +2,16 @@ from tabnanny import check
 
 
 class VersionTarget:
-    def __init__(self, diff_file:str):
+    def __init__(self, diff_file: str):
         self.prev_version = None
         self.next_version = None
         self.diff_file = diff_file
-    
+
     def get_version(self, line: str):
         if '=' in line:
-            return line.split('=')[1].replace('"', '').replace("'","").strip()
+            return line.split('=')[1].replace('"', '').replace("'", "").strip()
         if ':' in line:
-            return line.split(':')[1].replace('"', '').replace("'","").strip()
+            return line.split(':')[1].replace('"', '').replace("'", "").strip()
 
     def check_version_modified(self):
         with open(self.diff_file, 'r', encoding='utf-8') as f:
@@ -21,7 +21,7 @@ class VersionTarget:
                         self.next_version = self.get_version(line)
                     elif line.startswith('-'):
                         self.prev_version = self.get_version(line)
-        
+
         if self.prev_version is None and self.next_version is None:
             return False
         elif self.prev_version is None and self.next_version is not None:
@@ -58,12 +58,12 @@ class VersionTarget:
                     return True
             else:
                 return True
-        
+
         elif next_build > prev_build:
             return True
-        
+
         return False
-    
+
 
 def is_int(s):
     try:

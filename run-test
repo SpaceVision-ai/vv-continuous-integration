@@ -9,20 +9,20 @@ from typing import List
 
 from utils.slack import SlackReporter
 
+
 def get_all_test_codes() -> List[str]:
-    
     test_code_set = set()
-    
+
     test_dir = 'tests'
     if os.path.exists(test_dir):
         for file_name in os.listdir(test_dir):
             if file_name.endswith('.py') or file_name.endswith('.sh'):
                 test_code_set.add(os.path.join(test_dir, file_name))
-    
+
     return list(test_code_set)
 
-def run_test_code(client: SlackReporter, test_code:List[str]) -> int:
-    
+
+def run_test_code(client: SlackReporter, test_code: List[str]) -> int:
     error_msg = ''
     return_code = 0
     for file in test_code:
@@ -41,14 +41,15 @@ def run_test_code(client: SlackReporter, test_code:List[str]) -> int:
                 return_code = 1
                 error_msg += f'{file} failed\n'
                 error_msg += output.stdout.decode()
-        
+
         # other files
         # else:
-    
+
     if return_code != 0:
         client.send_slack_message(error_msg)
-    
+
     return return_code
+
 
 def main(args: Namespace):
     client = SlackReporter(
@@ -65,6 +66,7 @@ def main(args: Namespace):
     test_code = get_all_test_codes()
     if len(test_code) == 0:
         sys.exit(run_test_code(client, test_code))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
