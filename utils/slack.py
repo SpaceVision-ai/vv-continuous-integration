@@ -34,9 +34,16 @@ class SlackReporter:
         reply_prefix = 'details'
         total_message_length = len(msg + reply_prefix)
         if total_message_length > 4000:
-            reply_available_chunk = 3993  # except for codeblock "``` ```"
-            split_message_list = [msg[i, :i + reply_available_chunk] for i in
-                                  range(0, total_message_length, reply_available_chunk)]
+            split_message_list = []
+            reply_available_chunk = 3993  # except for codeblock "```{message}```"
+            first_message_chunk_available = reply_available_chunk - len(reply_prefix) - 2  # 2 for ``
+            first_message = msg[0: first_message_chunk_available]
+            split_message_list.append(first_message)
+
+            for i in range(first_message_chunk_available, total_message_length, reply_available_chunk):
+                split_message = msg[i:i+reply_available_chunk]
+                split_message_list.append(split_message)
+
             self.client.send_message(msg=f'```{split_message_list[0]}```', prefix=reply_prefix, reply_ts=ts)
             for split_message in split_message_list[1:]:
                 self.client.send_message(msg=f'```{split_message}```', reply_ts=ts)
