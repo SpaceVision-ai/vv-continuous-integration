@@ -1,5 +1,6 @@
 from slackboy import SlackBoy
 
+
 class SlackReporter:
     def __init__(self, token: str, channel: str, prefix: str, repository: str,
                  branch: str, target: str, pr_number: str, tag: str):
@@ -15,9 +16,7 @@ class SlackReporter:
     def get_pull_request_url(self) -> str:
         return f'https://github.com/teamdable/{self.repository}/pull/{self.pr_number}'
 
-
     def send_slack_header(self) -> str:
-        
         msg = (
             f'*Repository: {self.repository}* \n\n'
             '*Pull-request info:*\n'
@@ -32,4 +31,15 @@ class SlackReporter:
 
     def send_slack_message(self, msg: str):
         ts = self.send_slack_header()
-        self.client.send_message(msg=f'```{msg}```', prefix=self.prefix, reply_ts=ts)
+        reply_prefix = 'details'
+        total_message_length = len(msg + reply_prefix)
+        if total_message_length > 4000:
+            reply_available_chunk = 3993  # except for codeblock "``` ```"
+            split_message_list = [msg[i, :i + reply_available_chunk] for i in
+                                  range(0, total_message_length, reply_available_chunk)]
+            self.client.send_message(msg=f'```{split_message_list[0]}```', prefix=reply_prefix, reply_ts=ts)
+            for split_message in split_message_list[1:]:
+                self.client.send_message(msg=f'```{split_message}```', reply_ts=ts)
+
+        else:
+            self.client.send_message(msg=f'```{msg}```', prefix=reply_prefix, reply_ts=ts)
